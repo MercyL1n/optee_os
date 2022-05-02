@@ -64,6 +64,11 @@ struct ts_session *ts_get_calling_session(void)
 	return s;
 }
 
+char *ts_get_cur_ca_uuid(void){
+	DMSG("try to get ca_uuid");
+	return thread_get_tsd()->ca_uuid;
+}
+
 struct ts_session *ts_get_current_session_may_fail(void)
 {
 	return TAILQ_FIRST(&thread_get_tsd()->sess_stack);

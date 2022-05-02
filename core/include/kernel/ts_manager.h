@@ -53,6 +53,7 @@ struct ts_ops {
 #endif
 };
 
+char* ts_get_cur_ca_uuid(void);
 struct ts_session *ts_get_current_session(void);
 struct ts_session *ts_get_current_session_may_fail(void);
 

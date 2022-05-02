@@ -173,6 +173,8 @@ TEE_Result syscall_storage_obj_open(unsigned long storage_id, void *object_id,
 	const struct tee_file_operations *fops =
 			tee_svc_storage_file_ops(storage_id);
 	struct ts_session *sess = ts_get_current_session();
+	char *ca_uuid = ts_get_cur_ca_uuid();
+	DMSG("ts_get_cur_ca_uuid -> %x %x %x %x", ca_uuid[0], ca_uuid[1], ca_uuid[2], ca_uuid[3]);
 	struct user_ta_ctx *utc = to_user_ta_ctx(sess->ctx);
 	TEE_Result res = TEE_SUCCESS;
 	struct tee_pobj *po = NULL;

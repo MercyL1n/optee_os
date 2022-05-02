@@ -15,6 +15,7 @@ struct tee_pobj {
 	TAILQ_ENTRY(tee_pobj) link;
 	uint32_t refcnt;
 	TEE_UUID uuid;
+	TEE_CA_UUID *ca_uuid;
 	void *obj_id;
 	uint32_t obj_id_len;
 	uint32_t flags;

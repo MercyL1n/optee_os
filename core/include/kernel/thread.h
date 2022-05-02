@@ -43,6 +43,9 @@ struct thread_specific_data {
 	bool stackcheck_recursion;
 #endif
 	unsigned int syscall_recursion;
+#ifdef CFG_CAAUTH
+	char *ca_uuid;
+#endif
 };
 
 void thread_init_canaries(void);

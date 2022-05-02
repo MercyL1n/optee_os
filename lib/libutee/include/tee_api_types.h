@@ -26,6 +26,8 @@ typedef struct {
 	uint8_t clockSeqAndNode[8];
 } TEE_UUID;
 
+typedef char TEE_CA_UUID;
+
 /*
  * The TEE_Identity structure defines the full identity of a Client:
  * - login is one of the TEE_LOGIN_XXX constants

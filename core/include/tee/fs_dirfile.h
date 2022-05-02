@@ -87,13 +87,14 @@ TEE_Result tee_fs_dirfile_get_tmp(struct tee_fs_dirfile_dirh *dirh,
  * tee_fs_dirfile_find() - find a file handle
  * @dirh:	dirfile handle
  * @uuid:	uuid of requesting TA
+ * @ca_uuid:uuid of requesting CA
  * @oid:	object id
  * @oidlen:	length of object id
  * @dfh:	returned file handle
  */
 TEE_Result tee_fs_dirfile_find(struct tee_fs_dirfile_dirh *dirh,
-			       const TEE_UUID *uuid, const void *oid,
-			       size_t oidlen, struct tee_fs_dirfile_fileh *dfh);
+			       const TEE_UUID *uuid, const TEE_CA_UUID *ca_uuid,
+				   const void *oid,	size_t oidlen, struct tee_fs_dirfile_fileh *dfh);
 
 /**
  * tee_fs_dirfile_fileh_to_fname() - get string representation of file handle
@@ -108,6 +109,7 @@ TEE_Result tee_fs_dirfile_fileh_to_fname(const struct tee_fs_dirfile_fileh *dfh,
  * tee_fs_dirfile_rename() - changes/supplies file handle object id
  * @dirh:	dirfile handle
  * @uuid:	uuid of requesting TA
+ * @ca_uuid:uuid of requesting CA
  * @dfh:	file handle
  * @oid:	object id
  * @oidlen:	length of object id
@@ -117,6 +119,7 @@ TEE_Result tee_fs_dirfile_fileh_to_fname(const struct tee_fs_dirfile_fileh *dfh,
  */
 TEE_Result tee_fs_dirfile_rename(struct tee_fs_dirfile_dirh *dirh,
 				 const TEE_UUID *uuid,
+				 const TEE_CA_UUID *ca_uuid,
 				 struct tee_fs_dirfile_fileh *dfh,
 				 const void *oid, size_t oidlen);
 

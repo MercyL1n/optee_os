@@ -8,6 +8,7 @@
 #include <string.h>
 #include <tee/tee_pobj.h>
 #include <trace.h>
+#include <kernel/thread.h>
 
 static TAILQ_HEAD(tee_pobjs, tee_pobj) tee_pobjs =
 		TAILQ_HEAD_INITIALIZER(tee_pobjs);
@@ -101,8 +102,13 @@ TEE_Result tee_pobj_get(TEE_UUID *uuid, void *obj_id, uint32_t obj_id_len,
 		goto out;
 	}
 
+	// TEE_CA_UUID ca_uuid = CA_SECURE_STORAGE_UUID;
+	o->ca_uuid = ts_get_cur_ca_uuid();
 	o->refcnt = 1;
 	memcpy(&o->uuid, uuid, sizeof(TEE_UUID));
+	// memcpy(&o->ca_uuid, &ca_uuid, sizeof(TEE_CA_UUID));
+	DMSG("ts_get_cur_ca_uuid -> %x %x %x %x", 
+		o->ca_uuid[0], o->ca_uuid[1], o->ca_uuid[2], o->ca_uuid[3]);
 	o->flags = flags;
 	o->fops = fops;
 

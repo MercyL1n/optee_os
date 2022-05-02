@@ -21,6 +21,7 @@ struct tee_fs_dirfile_dirh {
 
 struct dirfile_entry {
 	TEE_UUID uuid;
+	TEE_CA_UUID *ca_uuid;
 	uint8_t oid[TEE_OBJECT_ID_MAX_LEN];
 	uint32_t oidlen;
 	uint8_t hash[TEE_FS_HTREE_HASH_SIZE];
@@ -209,10 +210,11 @@ TEE_Result tee_fs_dirfile_get_tmp(struct tee_fs_dirfile_dirh *dirh,
 }
 
 TEE_Result tee_fs_dirfile_find(struct tee_fs_dirfile_dirh *dirh,
-			       const TEE_UUID *uuid, const void *oid,
-			       size_t oidlen, struct tee_fs_dirfile_fileh *dfh)
+			       const TEE_UUID *uuid, const TEE_CA_UUID *ca_uuid,
+				   const void *oid, size_t oidlen, struct tee_fs_dirfile_fileh *dfh)
 {
 	TEE_Result res = TEE_SUCCESS;
+	// TEE_CA_UUID ca_uuid = CA_SECURE_STORAGE_UUID;
 	struct dirfile_entry dent = { };
 	int n = 0;
 
@@ -227,10 +229,22 @@ TEE_Result tee_fs_dirfile_find(struct tee_fs_dirfile_dirh *dirh,
 			continue;
 
 		assert(test_file(dirh, dent.file_number));
+		// DMSG("dent.ca_uuid.timeLow->%d", dent.ca_uuid.timeLow);
+		// DMSG("ca_uuid->timeLow->%d", ca_uuid.timeLow);
 
 		if (!memcmp(&dent.uuid, uuid, sizeof(dent.uuid)) &&
-		    !memcmp(&dent.oid, oid, oidlen))
-			break;
+		    !memcmp(&dent.oid, oid, oidlen)){
+				// for(int i = 0; i < 32; i ++){
+				// 	if(dent.ca_uuid[i] != ca_uuid[i]){
+				// 		DMSG("!Wrong CA!");
+				// 		return TEE_ERROR_ACCESS_CONFLICT;
+				// 	}
+				// }
+				DMSG("ts_get_cur_ca_uuid -> %x %x %x %x", 
+					ca_uuid[0], ca_uuid[1], ca_uuid[2], ca_uuid[3]);
+				break;
+			}
+			
 	}
 
 	if (dfh) {
@@ -285,6 +299,7 @@ TEE_Result tee_fs_dirfile_fileh_to_fname(const struct tee_fs_dirfile_fileh *dfh,
 
 TEE_Result tee_fs_dirfile_rename(struct tee_fs_dirfile_dirh *dirh,
 				 const TEE_UUID *uuid,
+				 const TEE_CA_UUID *ca_uuid,
 				 struct tee_fs_dirfile_fileh *dfh,
 				 const void *oid, size_t oidlen)
 {
@@ -295,6 +310,10 @@ TEE_Result tee_fs_dirfile_rename(struct tee_fs_dirfile_dirh *dirh,
 		return TEE_ERROR_BAD_PARAMETERS;
 	memset(&dent, 0, sizeof(dent));
 	dent.uuid = *uuid;
+
+	// TEE_CA_UUID ca_uuid = CA_SECURE_STORAGE_UUID;
+	dent.ca_uuid = *ca_uuid;
+
 	if (oidlen)
 		memcpy(dent.oid, oid, oidlen);
 	else
@@ -307,7 +326,7 @@ TEE_Result tee_fs_dirfile_rename(struct tee_fs_dirfile_dirh *dirh,
 	if (dfh->idx < 0) {
 		struct tee_fs_dirfile_fileh dfh2;
 
-		res = tee_fs_dirfile_find(dirh, uuid, oid, oidlen, &dfh2);
+		res = tee_fs_dirfile_find(dirh, uuid, ca_uuid, oid, oidlen, &dfh2);
 		if (res) {
 			if (res == TEE_ERROR_ITEM_NOT_FOUND)
 				res = find_empty_idx(dirh, &dfh2.idx);
